@@ -15,7 +15,13 @@ export const Row: FC<Props> = (props) => {
       align="center"
       h="24px"
       w="maxContent"
-      sx={{ whiteSpace: "nowrap" }}
+      sx={{
+        whiteSpace: "nowrap",
+        overflowX: "scroll",
+        "::-webkit-scrollbar": {
+          display: "none",
+        },
+      }}
     >
       {children}
     </Flex>

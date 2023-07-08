@@ -74,17 +74,7 @@ export const useCommand = (userName: string) => {
       default: {
         newContent.push(
           <Row key={`content ${content.length + newContent.length}`}>
-            <Text
-              w="100%"
-              sx={{
-                overflowX: "scroll",
-                "::-webkit-scrollbar": {
-                  display: "none",
-                },
-              }}
-            >
-              zsh: command not found: {commands.at(-1)}
-            </Text>
+            <Text w="100%">zsh: command not found: {commands.at(-1)}</Text>
           </Row>
         );
       }
