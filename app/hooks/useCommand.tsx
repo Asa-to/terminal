@@ -38,6 +38,7 @@ export const useCommand = (userName: string) => {
         key="content 1"
         userName={name}
         setCommand={(command) => setCommands((old) => [...old, command])}
+        commands={commands}
         id="0"
       />,
     ]);
@@ -106,6 +107,7 @@ export const useCommand = (userName: string) => {
           userName={newName || name}
           key={`content ${content.length + newContent.length}`}
           setCommand={(v: string) => setCommands((old) => [...old, v])}
+          commands={commands}
           id={promptId.toString()}
         />,
       ];
