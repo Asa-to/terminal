@@ -4,6 +4,7 @@ import { Prompt } from "~/component/terminal/Prompt";
 import { Row } from "~/component/terminal/Row";
 import { Text } from "@mantine/core";
 import { helpCommand } from "~/commands/help";
+import { useTodo } from "./useTodo";
 
 export const useCommand = (userName: string) => {
   const [commands, setCommands] = useState<string[]>([]);
@@ -20,6 +21,10 @@ export const useCommand = (userName: string) => {
       setCommand={(v: string) => setCommands((old) => [...old, v])}
     />,
   ]);
+  const { addTodo, displayTodo, removeTodo } = useTodo(
+    (content) => setContent((old) => [...old, content]),
+    content
+  );
 
   useEffect(() => {
     const newCommand = commands.at(-1);
@@ -27,12 +32,27 @@ export const useCommand = (userName: string) => {
       return;
     }
     const newContent: ReactNode[] = [];
-    switch (newCommand) {
+    switch (newCommand.split(" ")[0]) {
       case "help": {
         helpCommand(
           (v) => newContent.push(v),
           `content ${content.length + newContent.length}`
         );
+        break;
+      }
+      case "addTodo": {
+        const newTodo = newCommand.split(" ")?.[1];
+        if (newTodo) {
+          addTodo(newTodo);
+        }
+        break;
+      }
+      case "removeTodo": {
+        removeTodo(Number(newCommand.split(" ")[1]));
+        break;
+      }
+      case "todoList": {
+        displayTodo();
         break;
       }
       default: {

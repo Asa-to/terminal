@@ -11,7 +11,7 @@ export const Terminal: FC<Props> = (props) => {
   const { content } = useCommand(userName);
 
   return (
-    <Stack spacing={0}>
+    <Stack spacing={0} px={8}>
       {content.map((item) => {
         return item;
       })}
