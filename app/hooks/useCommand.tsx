@@ -1,10 +1,11 @@
 import type { ReactNode } from "react";
-import { useRef, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Prompt } from "~/component/terminal/Prompt";
 import { Row } from "~/component/terminal/Row";
 import { Text } from "@mantine/core";
 import { helpCommand } from "~/commands/help";
 import { useTodo } from "../commands/todo";
+import { useName } from "~/commands/name";
 
 export const useCommand = (userName: string) => {
   const [commands, setCommands] = useState<string[]>([]);
@@ -13,6 +14,7 @@ export const useCommand = (userName: string) => {
     (content) => setContent((old) => [...old, content]),
     content
   );
+  const { name, setName } = useName(userName);
 
   const [promptId, setPromptId] = useState(0);
   useEffect(() => {
@@ -21,34 +23,35 @@ export const useCommand = (userName: string) => {
       ?.setAttribute("readonly", "true");
   }, [promptId]);
 
-  const isInit = useRef(true);
+  useEffect(() => {
+    if (content.length === 0) {
+      setContent([
+        <Text color="yellow" key="content 0" display="inline">
+          Terminal ٩(ˊᗜˋ*)و:&nbsp;
+          <Text color="white" display="inline">
+            Hey, you found the terminal! Type `help` to get started.
+          </Text>
+        </Text>,
+        <Prompt
+          key="content 1"
+          userName={name}
+          setCommand={(command) => setCommands((old) => [...old, command])}
+          id={promptId.toString()}
+        />,
+      ]);
+      setPromptId(1);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     const newCommand = commands.at(-1);
-    if (!newCommand) {
-      if (content.length === 0) {
-        setContent([
-          <Text color="yellow" key="content 0" display="inline">
-            Terminal ٩(ˊᗜˋ*)و:&nbsp;
-            <Text color="white" display="inline">
-              Hey, you found the terminal! Type `help` to get started.
-            </Text>
-          </Text>,
-          <Prompt
-            key="content 1"
-            userName={userName}
-            setCommand={(command) => setCommands((old) => [...old, command])}
-            id={promptId.toString()}
-          />,
-        ]);
-        if (isInit.current) {
-          setPromptId((v) => v + 1);
-          isInit.current = false;
-        }
-      }
+    if (newCommand === undefined) {
       return;
     }
     const newContent: ReactNode[] = [];
-    switch (newCommand.split(" ")[0]) {
+    let newName = "";
+    switch (newCommand?.split(" ")[0]) {
       case "help": {
         helpCommand(
           (v) => newContent.push(v),
@@ -71,6 +74,16 @@ export const useCommand = (userName: string) => {
         displayTodo();
         break;
       }
+      case "rename": {
+        newName = newCommand.split(" ")[1];
+        if (newName) {
+          setName(newName);
+        }
+        break;
+      }
+      case "": {
+        break;
+      }
       default: {
         newContent.push(
           <Row key={`content ${content.length + newContent.length}`}>
@@ -84,7 +97,7 @@ export const useCommand = (userName: string) => {
         ...old,
         ...newContent,
         <Prompt
-          userName={userName}
+          userName={newName || name}
           key={`content ${content.length + newContent.length}`}
           setCommand={(v: string) => setCommands((old) => [...old, v])}
           id={promptId.toString()}
