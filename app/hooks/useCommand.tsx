@@ -4,7 +4,7 @@ import { Prompt } from "~/component/terminal/Prompt";
 import { Row } from "~/component/terminal/Row";
 import { Text } from "@mantine/core";
 import { helpCommand } from "~/commands/help";
-import { useTodo } from "./useTodo";
+import { useTodo } from "../commands/todo";
 
 export const useCommand = (userName: string) => {
   const [commands, setCommands] = useState<string[]>([]);
