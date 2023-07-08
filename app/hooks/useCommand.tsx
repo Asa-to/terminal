@@ -15,7 +15,9 @@ export const useCommand = (userName: string) => {
     content
   );
   const { name, setName } = useName(userName);
+  const [clear, setClear] = useState(false);
 
+  // 最新ではないpromptをreadonlyにする
   const [promptId, setPromptId] = useState(0);
   useEffect(() => {
     document
@@ -23,26 +25,25 @@ export const useCommand = (userName: string) => {
       ?.setAttribute("readonly", "true");
   }, [promptId]);
 
+  // 初期コンテンツの挿入
   useEffect(() => {
-    if (content.length === 0) {
-      setContent([
-        <Text color="yellow" key="content 0" display="inline">
-          Terminal ٩(ˊᗜˋ*)و:&nbsp;
-          <Text color="white" display="inline">
-            Hey, you found the terminal! Type `help` to get started.
-          </Text>
-        </Text>,
-        <Prompt
-          key="content 1"
-          userName={name}
-          setCommand={(command) => setCommands((old) => [...old, command])}
-          id={promptId.toString()}
-        />,
-      ]);
-      setPromptId(1);
-    }
+    setContent([
+      <Text color="yellow" key="content 0" display="inline">
+        Terminal ٩(ˊᗜˋ*)و:&nbsp;
+        <Text color="white" display="inline">
+          Hey, you found the terminal! Type `help` to get started.
+        </Text>
+      </Text>,
+      <Prompt
+        key="content 1"
+        userName={name}
+        setCommand={(command) => setCommands((old) => [...old, command])}
+        id="0"
+      />,
+    ]);
+    setPromptId(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [clear]);
 
   useEffect(() => {
     const newCommand = commands.at(-1);
@@ -83,6 +84,11 @@ export const useCommand = (userName: string) => {
       }
       case "": {
         break;
+      }
+      case "clear": {
+        setClear((v) => !v);
+        setContent([]);
+        return;
       }
       default: {
         newContent.push(
