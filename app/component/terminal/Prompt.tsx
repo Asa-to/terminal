@@ -6,10 +6,11 @@ import { useForm } from "@mantine/form";
 type Props = {
   userName: string;
   setCommand: (command: string) => void;
+  id: string;
 };
 
 export const Prompt: FC<Props> = (props) => {
-  const { userName, setCommand } = props;
+  const { userName, setCommand, id } = props;
   const form = useForm({
     initialValues: {
       command: "",
@@ -28,6 +29,7 @@ export const Prompt: FC<Props> = (props) => {
           variant="unstyled"
           {...form.getInputProps("command")}
           autoFocus
+          id={id}
         />
       </form>
     </Row>

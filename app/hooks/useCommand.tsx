@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Prompt } from "~/component/terminal/Prompt";
 import { Row } from "~/component/terminal/Row";
 import { Text } from "@mantine/core";
@@ -8,27 +8,43 @@ import { useTodo } from "./useTodo";
 
 export const useCommand = (userName: string) => {
   const [commands, setCommands] = useState<string[]>([]);
-  const [content, setContent] = useState<ReactNode[]>([
-    <Text color="yellow" key="content 0" display="inline">
-      Terminal ٩(ˊᗜˋ*)و:&nbsp;
-      <Text color="white" display="inline">
-        Hey, you found the terminal! Type `help` to get started.
-      </Text>
-    </Text>,
-    <Prompt
-      userName={userName}
-      key="content 1"
-      setCommand={(v: string) => setCommands((old) => [...old, v])}
-    />,
-  ]);
+  const [content, setContent] = useState<ReactNode[]>([]);
   const { addTodo, displayTodo, removeTodo } = useTodo(
     (content) => setContent((old) => [...old, content]),
     content
   );
 
+  const [promptId, setPromptId] = useState(0);
+  useEffect(() => {
+    document
+      .getElementById((promptId - 2).toString())
+      ?.setAttribute("readonly", "true");
+  }, [promptId]);
+
+  const isInit = useRef(true);
   useEffect(() => {
     const newCommand = commands.at(-1);
     if (!newCommand) {
+      if (content.length === 0) {
+        setContent([
+          <Text color="yellow" key="content 0" display="inline">
+            Terminal ٩(ˊᗜˋ*)و:&nbsp;
+            <Text color="white" display="inline">
+              Hey, you found the terminal! Type `help` to get started.
+            </Text>
+          </Text>,
+          <Prompt
+            key="content 1"
+            userName={userName}
+            setCommand={(command) => setCommands((old) => [...old, command])}
+            id={promptId.toString()}
+          />,
+        ]);
+        if (isInit.current) {
+          setPromptId((v) => v + 1);
+          isInit.current = false;
+        }
+      }
       return;
     }
     const newContent: ReactNode[] = [];
@@ -81,9 +97,11 @@ export const useCommand = (userName: string) => {
           userName={userName}
           key={`content ${content.length + newContent.length}`}
           setCommand={(v: string) => setCommands((old) => [...old, v])}
+          id={promptId.toString()}
         />,
       ];
     });
+    setPromptId((v) => v + 1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [commands]);
 
