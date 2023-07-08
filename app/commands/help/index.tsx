@@ -17,6 +17,12 @@ export const helpCommand = (
       <Row>
         <Help command="todoList" note="todoListを表示します" />
       </Row>
+      <Row>
+        <Help command="rename XXXX" note="プロンプトの名前を変えられます" />
+      </Row>
+      <Row>
+        <Help command="clear" note="表示をクリアできます" />
+      </Row>
     </Box>
   );
 };
