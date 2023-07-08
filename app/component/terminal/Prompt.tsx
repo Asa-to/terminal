@@ -50,7 +50,7 @@ export const Prompt: FC<Props> = (props) => {
                 return;
               }
               const command = commands.at(curIndex.current - 1);
-              if (command) {
+              if (command !== undefined) {
                 setInput(command);
                 curIndex.current -= 1;
               }
@@ -62,7 +62,7 @@ export const Prompt: FC<Props> = (props) => {
                 curIndex.current += 1;
               }
               const command = commands.at(index);
-              if (command) {
+              if (command !== undefined) {
                 setInput(command);
                 curIndex.current += 1;
               }
