@@ -23,6 +23,9 @@ export const helpCommand = (
       <Row>
         <Help command="clear" note="表示をクリアできます" />
       </Row>
+      <Row>
+        <Help command="rename XXXX" note="ユーザー名を変更できます" />
+      </Row>
     </Box>
   );
 };
@@ -35,11 +38,9 @@ type Props = {
 const Help: FC<Props> = (props) => {
   const { command, note } = props;
   return (
-    <Text display="inline" color="red">
-      {command}
-      <Text display="inline" color="white">
-        : {note}
-      </Text>
-    </Text>
+    <Box display="grid" sx={{ gridTemplateColumns: "160px 1fr" }}>
+      <Text>{command}</Text>
+      <Text>: {note}</Text>
+    </Box>
   );
 };
