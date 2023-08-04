@@ -8,11 +8,11 @@ type Props = {
 
 export const Terminal: FC<Props> = (props) => {
   const { userName } = props;
-  const { content } = useCommand(userName);
+  const { terminalRows } = useCommand(userName);
 
   return (
     <Stack spacing={0} px={8}>
-      {content.map((item) => {
+      {terminalRows.map((item) => {
         return item;
       })}
     </Stack>

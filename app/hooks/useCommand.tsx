@@ -6,13 +6,14 @@ import { Text } from "@mantine/core";
 import { helpCommand } from "~/commands/help";
 import { useTodo } from "../commands/todo";
 import { useName } from "~/commands/name";
+import { closeBrows } from "~/commands/shutdown";
 
 export const useCommand = (userName: string) => {
   const [commands, setCommands] = useState<string[]>([]);
-  const [content, setContent] = useState<ReactNode[]>([]);
+  const [terminalRows, setTerminalRows] = useState<ReactNode[]>([]);
   const { addTodo, displayTodo, removeTodo } = useTodo(
-    (content) => setContent((old) => [...old, content]),
-    content
+    (content) => setTerminalRows((old) => [...old, content]),
+    terminalRows
   );
   const { name, setName } = useName(userName);
   const [clear, setClear] = useState(false);
@@ -27,7 +28,7 @@ export const useCommand = (userName: string) => {
 
   // 初期コンテンツの挿入
   useEffect(() => {
-    setContent([
+    setTerminalRows([
       <Text color="yellow" key="content 0" display="inline">
         Terminal ٩(ˊᗜˋ*)و:&nbsp;
         <Text color="white" display="inline">
@@ -52,12 +53,13 @@ export const useCommand = (userName: string) => {
       return;
     }
     const newContent: ReactNode[] = [];
+    // renameコマンド実行時にpromptに新しい名前を反映させるための変数
     let newName = "";
     switch (newCommand?.split(" ")[0]) {
       case "help": {
         helpCommand(
           (v) => newContent.push(v),
-          `content ${content.length + newContent.length}`
+          `content ${terminalRows.length + newContent.length}`
         );
         break;
       }
@@ -76,6 +78,10 @@ export const useCommand = (userName: string) => {
         displayTodo();
         break;
       }
+      case "shutdown": {
+        closeBrows();
+        break;
+      }
       case "rename": {
         newName = newCommand.split(" ")[1];
         if (newName) {
@@ -88,24 +94,24 @@ export const useCommand = (userName: string) => {
       }
       case "clear": {
         setClear((v) => !v);
-        setContent([]);
+        setTerminalRows([]);
         return;
       }
       default: {
         newContent.push(
-          <Row key={`content ${content.length + newContent.length}`}>
+          <Row key={`content ${terminalRows.length + newContent.length}`}>
             <Text w="100%">zsh: command not found: {commands.at(-1)}</Text>
           </Row>
         );
       }
     }
-    setContent((old) => {
+    setTerminalRows((old) => {
       return [
         ...old,
         ...newContent,
         <Prompt
           userName={newName || name}
-          key={`content ${content.length + newContent.length}`}
+          key={`content ${terminalRows.length + newContent.length}`}
           setCommand={(v: string) => setCommands((old) => [...old, v])}
           commands={commands}
           id={promptId.toString()}
@@ -119,7 +125,7 @@ export const useCommand = (userName: string) => {
   return {
     commands,
     setCommands,
-    content,
-    setContent,
+    terminalRows,
+    setTerminalRows,
   };
 };
