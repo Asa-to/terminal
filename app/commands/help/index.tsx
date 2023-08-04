@@ -26,6 +26,9 @@ export const helpCommand = (
       <Row>
         <Help command="rename XXXX" note="ユーザー名を変更できます" />
       </Row>
+      <Row>
+        <Help command="shutdown" note="ページが閉じます" />
+      </Row>
     </Box>
   );
 };
